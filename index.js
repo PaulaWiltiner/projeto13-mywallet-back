@@ -14,7 +14,7 @@ const mongoClient = new MongoClient(process.env.MONGO_URI);
 let db;
 
 mongoClient.connect().then(() => {
-  db = mongoClient.db("");
+  db = mongoClient.db("databaseMyWallet");
 });
 
 const signUpSchema = async (user) => {
@@ -46,7 +46,7 @@ const recordSchema = async (record) =>
     value: Joi.string()
       .pattern(/^[0-9]{1,6},[0-9]{2}$/)
       .required(),
-    discription: Joi.string().min(3).max(30).required(),
+    description: Joi.string().min(3).max(30).required(),
     type: Joi.string().valid("entry", "exit").required(),
   }).validateAsync(record);
 
@@ -110,6 +110,7 @@ server.get("/records", async (req, res) => {
     const userList = await db
       .collection("records")
       .findOne({ userId: session.userId });
+    const List = await db.collection("records").find({}).toArray;
     const listRecords = userList.records;
     const listReverse = listRecords.reverse();
     return res.send(listReverse);
@@ -120,7 +121,7 @@ server.get("/records", async (req, res) => {
 
 server.post("/records", async (req, res) => {
   try {
-    const { value, discription } = req.body;
+    const { value, description } = req.body;
     const typeRecord = req.query.typeRecord;
     await recordSchema({ ...req.body, type: typeRecord });
     const { authorization } = req.headers;
@@ -135,7 +136,7 @@ server.post("/records", async (req, res) => {
       userId: session.userId,
       type: typeRecord,
       value: value,
-      discription: discription,
+      description: description,
       date: dayjs().format("DD/MM"),
     };
 
@@ -151,9 +152,7 @@ server.post("/records", async (req, res) => {
       },
       { $set: { records: [...userRecords] } }
     );
-
-    const listReverse = userRecords.reverse();
-    return res.status(201).send(listReverse);
+    return res.sendStatus(201);
   } catch (err) {
     return res.sendStatus(422);
   }
@@ -221,7 +220,7 @@ server.put("/records/:idRecord", async (req, res) => {
     if (!session || !tokenAuth) {
       return res.sendStatus(401);
     }
-    const { value, discription } = req.body;
+    const { value, description } = req.body;
     const typeRecord = req.query.typeRecord;
     await recordSchema({ ...req.body, type: typeRecord });
     const { idRecord } = req.params;
@@ -234,7 +233,7 @@ server.put("/records/:idRecord", async (req, res) => {
           _id: ObjectId(idRecord),
           userId: session.userId,
         },
-        { $set: { value: value, discription: discription } }
+        { $set: { value: value, description: description } }
       );
       const userRecords = await db
         .collection("recordsGlobal")
