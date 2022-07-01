@@ -110,7 +110,6 @@ server.get("/records", async (req, res) => {
     const userList = await db
       .collection("records")
       .findOne({ userId: session.userId });
-    const List = await db.collection("records").find({}).toArray;
     const listRecords = userList.records;
     const listReverse = listRecords.reverse();
     return res.send(listReverse);
