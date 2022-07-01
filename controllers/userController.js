@@ -1,16 +1,7 @@
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 import { signInSchema, signUpSchema } from "./validationsController.js";
-import dotenv from "dotenv";
-import { MongoClient } from "mongodb";
-
-dotenv.config();
-
-const mongoClient = new MongoClient(process.env.MONGO_URI);
-let db;
-mongoClient.connect().then(() => {
-  db = mongoClient.db(process.env.MONGO_DATABASE);
-});
+import { db } from "../database/mongo.js";
 
 export async function signUp(req, res) {
   try {
@@ -32,6 +23,7 @@ export async function signUp(req, res) {
         return res.sendStatus(409);
       }
     }
+
     return res.sendStatus(422);
   }
 }
@@ -51,6 +43,21 @@ export async function signIn(req, res) {
       token,
     });
   } catch (err) {
+    console.log(err);
+    return res.sendStatus(422);
+  }
+}
+
+export async function logOut(req, res) {
+  try {
+    const { authorization } = req.headers;
+    const tokenAuth = authorization?.replace("Bearer ", "");
+    await db.collection("sessions").deleteOne({
+      token: tokenAuth,
+    });
+    return res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
     return res.sendStatus(422);
   }
 }

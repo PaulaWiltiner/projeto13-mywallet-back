@@ -1,15 +1,6 @@
 import Joi from "joi";
 import bcrypt from "bcrypt";
-import dotenv from "dotenv";
-import { MongoClient } from "mongodb";
-
-dotenv.config();
-
-const mongoClient = new MongoClient(process.env.MONGO_URI);
-let db;
-mongoClient.connect().then(() => {
-  db = mongoClient.db(process.env.MONGO_DATABASE);
-});
+import { db } from "../database/mongo.js";
 
 export async function signUpSchema(user) {
   const { email, password } = user;

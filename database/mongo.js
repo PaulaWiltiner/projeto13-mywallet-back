@@ -4,12 +4,13 @@ import { MongoClient } from "mongodb";
 dotenv.config();
 
 const mongoClient = new MongoClient(process.env.MONGO_URI);
-let db;
+var db;
 mongoClient.connect().then(() => {
   db = mongoClient.db(process.env.MONGO_DATABASE);
+  console.log(process.env.MONGO_DATABASE, db);
 });
 
-export default db;
+export { db };
 
-// import db from "../database/mongon.js" para controllers e middlewares
+// import db from "../database/mongo.js" para controllers e middlewares
 // err Cannot read properties of undefined (reading 'collection')

@@ -1,19 +1,10 @@
 import ObjectId from "bson-objectid";
 import { recordSchema } from "./validationsController.js";
-import dotenv from "dotenv";
-import { MongoClient } from "mongodb";
-
-dotenv.config();
-
-const mongoClient = new MongoClient(process.env.MONGO_URI);
-let db;
-mongoClient.connect().then(() => {
-  db = mongoClient.db(process.env.MONGO_DATABASE);
-});
+import { db } from "../database/mongo.js";
 
 export async function deleteOneRecord(req, res) {
   try {
-    const session = res.locals.session;
+    const { session } = res.locals;
     const { idRecord } = req.params;
     await db.collection("recordsGlobal").deleteOne({
       _id: ObjectId(idRecord),
@@ -38,7 +29,6 @@ export async function deleteOneRecord(req, res) {
 
 export async function getOneRecord(req, res) {
   try {
-    const session = res.locals.session;
     const { idRecord } = req.params;
     const record = await db.collection("recordsGlobal").findOne({
       _id: ObjectId(idRecord),
@@ -51,7 +41,7 @@ export async function getOneRecord(req, res) {
 
 export async function updateOneRecord(req, res) {
   try {
-    const session = res.locals.session;
+    const { session } = res.locals;
     const { value, description } = req.body;
     const typeRecord = req.query.typeRecord;
     await recordSchema({ ...req.body, type: typeRecord });
