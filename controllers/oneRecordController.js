@@ -13,14 +13,7 @@ mongoClient.connect().then(() => {
 
 export async function deleteOneRecord(req, res) {
   try {
-    const { authorization } = req.headers;
-    const tokenAuth = authorization?.replace("Bearer ", "");
-    const session = await db
-      .collection("sessions")
-      .findOne({ token: tokenAuth });
-    if (!session || !tokenAuth) {
-      return res.sendStatus(401);
-    }
+    const session = res.locals.session;
     const { idRecord } = req.params;
     await db.collection("recordsGlobal").deleteOne({
       _id: ObjectId(idRecord),
@@ -45,14 +38,7 @@ export async function deleteOneRecord(req, res) {
 
 export async function getOneRecord(req, res) {
   try {
-    const { authorization } = req.headers;
-    const tokenAuth = authorization?.replace("Bearer ", "");
-    const session = await db
-      .collection("sessions")
-      .findOne({ token: tokenAuth });
-    if (!session || !tokenAuth) {
-      return res.sendStatus(401);
-    }
+    const session = res.locals.session;
     const { idRecord } = req.params;
     const record = await db.collection("recordsGlobal").findOne({
       _id: ObjectId(idRecord),
@@ -65,14 +51,7 @@ export async function getOneRecord(req, res) {
 
 export async function updateOneRecord(req, res) {
   try {
-    const { authorization } = req.headers;
-    const tokenAuth = authorization?.replace("Bearer ", "");
-    const session = await db
-      .collection("sessions")
-      .findOne({ token: tokenAuth });
-    if (!session || !tokenAuth) {
-      return res.sendStatus(401);
-    }
+    const session = res.locals.session;
     const { value, description } = req.body;
     const typeRecord = req.query.typeRecord;
     await recordSchema({ ...req.body, type: typeRecord });

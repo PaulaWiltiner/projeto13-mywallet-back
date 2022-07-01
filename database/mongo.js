@@ -11,5 +11,5 @@ mongoClient.connect().then(() => {
 
 export default db;
 
-// import db from "../database/mongon.js"
+// import db from "../database/mongon.js" para controllers e middlewares
 // err Cannot read properties of undefined (reading 'collection')

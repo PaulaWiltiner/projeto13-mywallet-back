@@ -13,14 +13,7 @@ mongoClient.connect().then(() => {
 
 export async function getRecords(req, res) {
   try {
-    const { authorization } = req.headers;
-    const tokenAuth = authorization?.replace("Bearer ", "");
-    const session = await db
-      .collection("sessions")
-      .findOne({ token: tokenAuth });
-    if (!session || !tokenAuth) {
-      return res.sendStatus(401);
-    }
+    const session = res.locals.session;
     const userList = await db
       .collection("records")
       .findOne({ userId: session.userId });
@@ -34,17 +27,10 @@ export async function getRecords(req, res) {
 
 export async function createRecords(req, res) {
   try {
+    const session = res.locals.session;
     const { value, description } = req.body;
     const typeRecord = req.query.typeRecord;
     await recordSchema({ ...req.body, type: typeRecord });
-    const { authorization } = req.headers;
-    const tokenAuth = authorization?.replace("Bearer ", "");
-    const session = await db
-      .collection("sessions")
-      .findOne({ token: tokenAuth });
-    if (!session || !tokenAuth) {
-      return res.sendStatus(401);
-    }
     const record = {
       userId: session.userId,
       type: typeRecord,
