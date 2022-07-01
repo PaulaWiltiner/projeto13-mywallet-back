@@ -43,7 +43,6 @@ export async function signIn(req, res) {
       token,
     });
   } catch (err) {
-    console.log(err);
     return res.sendStatus(422);
   }
 }
@@ -57,7 +56,6 @@ export async function logOut(req, res) {
     });
     return res.sendStatus(200);
   } catch (err) {
-    console.log(err);
     return res.sendStatus(422);
   }
 }

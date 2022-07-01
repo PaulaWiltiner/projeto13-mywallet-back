@@ -15,4 +15,6 @@ server.use(userRouter);
 server.use(validateUserMiddleware, oneRecordRouter);
 server.use(validateUserMiddleware, recordsRouter);
 
-server.listen(process.env.PORT);
+server.listen(process.env.PORT, () => {
+  console.log("Server running on port " + process.env.PORT);
+});

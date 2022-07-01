@@ -27,7 +27,7 @@ export async function signInSchema(user) {
 }
 
 export async function recordSchema(record) {
-  Joi.object({
+  return Joi.object({
     value: Joi.string()
       .pattern(/^[0-9]{1,6},[0-9]{2}$/)
       .required(),
